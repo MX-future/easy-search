@@ -4,24 +4,26 @@ const openalex = require('./providers/openalex');
 const iconify = require('./providers/iconify');
 const bingrss = require('./providers/bingrss');
 const bing = require('./providers/bing');
+const local = require('./providers/local');
 
 // 类型 -> 参与搜索的 provider
 // 注：仅聚合正版官方渠道与免费合法资源，不包含任何盗版/磁力内容源
 const TYPE_ROUTES = {
-  all: ['github', 'openalex', 'iconify', 'bingrss', 'bing'],
+  all: ['local', 'github', 'openalex', 'iconify', 'bingrss', 'bing'],
   software: ['github', 'bingrss'],
   video: ['bingrss'],
   music: ['bingrss'],
   paper: ['openalex'],
   image: ['iconify'],
   document: ['bingrss', 'openalex'],
-  general: ['bingrss', 'bing'],
+  general: ['local', 'bingrss', 'bing'],
 };
 
-const PROVIDERS = { github, openalex, iconify, bingrss, bing };
+const PROVIDERS = { github, openalex, iconify, bingrss, bing, local };
 
 // 展示顺序权重（同类型内按来源优先级排）
 const SOURCE_RANK = {
+  '本地爬虫索引': 0,
   'GitHub 开源': 1,
   'OpenAlex 学术': 2,
   '正版视频渠道': 3,

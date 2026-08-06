@@ -126,12 +126,43 @@ resource-search/
 │       ├── openalex.js     # 学术论文
 │       ├── iconify.js      # SVG 图标素材
 │       ├── bingrss.js      # Bing 国内版 RSS（正版渠道兜底）
-│       └── bing.js         # Bing API（可选）
+│       ├── bing.js         # Bing API（可选）
+│       └── local.js        # 本地爬虫索引数据源
+├── crawler/                # 聚焦爬虫（搜索引擎式，合规）
+│   ├── crawler.js          # BFS 抓取主流程（robots 遵守/限速/黑名单）
+│   ├── config.js           # 种子站点/深度/限速/黑名单配置
+│   ├── robots.js           # robots.txt 解析
+│   ├── parser.js           # HTML 解析 + 中文 bigram 分词
+│   ├── indexer.js          # 倒排索引 + TF-IDF 查询
+│   └── store.js            # JSON 持久化
+├── data/crawl/index.json   # 爬虫索引（提交入库，Netlify 部署自动带上）
 └── public/
     ├── index.html          # 单页应用
     ├── style.css           # 深色科技风样式
     └── app.js              # 搜索/过滤/渲染逻辑
 ```
+
+## 🕷 爬虫机制（搜索引擎式）
+
+内置一个**合规的聚焦爬虫**：从种子站点广度优先抓取公开页面，解析正文，构建中文倒排索引（bigram 分词 + TF-IDF 相关度），结果接入搜索接口的"本地爬虫索引"数据源。
+
+**合规保障**：
+- ✅ 遵守各站点 `robots.txt`（不抓取被禁止的路径）
+- ✅ 礼貌限速（同域 ≥1.5s 间隔）、标识 UA 与联系方式
+- ✅ 黑名单排除盗版/磁力/影视下载站（域名 + 标题双层过滤）
+- ✅ 仅抓取公开页面，只递归同域链接
+
+**使用**：
+
+```bash
+# 运行爬虫（种子/深度/限速在 crawler/config.js 配置）
+npm run crawl
+
+# 生成的索引会自动接入搜索接口，搜索 "JavaScript" 试试
+# 提交 data/crawl/index.json 到仓库后，Netlify 部署自动包含该索引
+```
+
+**工作原理**：`抓取 -> 解析(标题/正文/链接) -> 去重 -> 倒排索引 -> TF-IDF 检索`。新增种子站点只需编辑 `crawler/config.js` 的 `SEED_URLS`。
 
 ## 🛠 新增一个数据源
 

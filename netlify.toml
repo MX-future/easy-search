@@ -9,6 +9,8 @@
 [functions]
   # esbuild 自动打包函数及其引用的项目内模块（server/ 下的聚合逻辑）
   node_bundler = "esbuild"
+  # 将爬虫索引文件一并打包进函数（本地爬虫索引数据源需要）
+  included_files = ["data/crawl/index.json"]
 
 # /api/* 请求全部路由到 Netlify Functions
 # /api/search  -> /.netlify/functions/search
