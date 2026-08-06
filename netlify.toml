@@ -1,0 +1,19 @@
+# Netlify 部署配置
+# 前端静态文件在 public/，后端聚合逻辑通过 Netlify Functions 运行
+
+[build]
+  # 前端无需构建步骤，直接发布静态目录
+  command = "echo 'Static frontend, no build step required'"
+  publish = "public"
+
+[functions]
+  # esbuild 自动打包函数及其引用的项目内模块（server/ 下的聚合逻辑）
+  node_bundler = "esbuild"
+
+# /api/* 请求全部路由到 Netlify Functions
+# /api/search  -> /.netlify/functions/search
+# /api/health  -> /.netlify/functions/health
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
