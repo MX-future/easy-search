@@ -1,5 +1,4 @@
 // 聚合调度器：并发调用各数据源，归一化、去重、排序
-const itunes = require('./providers/itunes');
 const github = require('./providers/github');
 const openalex = require('./providers/openalex');
 const iconify = require('./providers/iconify');
@@ -7,30 +6,30 @@ const bingrss = require('./providers/bingrss');
 const bing = require('./providers/bing');
 
 // 类型 -> 参与搜索的 provider
+// 注：仅聚合正版官方渠道与免费合法资源，不包含任何盗版/磁力内容源
 const TYPE_ROUTES = {
-  all: ['itunes', 'github', 'openalex', 'iconify', 'bingrss', 'bing'],
-  software: ['github', 'itunes'],
-  video: ['itunes', 'bingrss'],
-  music: ['itunes'],
+  all: ['github', 'openalex', 'iconify', 'bingrss', 'bing'],
+  software: ['github', 'bingrss'],
+  video: ['bingrss'],
+  music: ['bingrss'],
   paper: ['openalex'],
   image: ['iconify'],
-  document: ['bingrss', 'openalex', 'itunes'],
+  document: ['bingrss', 'openalex'],
   general: ['bingrss', 'bing'],
 };
 
-const PROVIDERS = { itunes, github, openalex, iconify, bingrss, bing };
+const PROVIDERS = { github, openalex, iconify, bingrss, bing };
 
 // 展示顺序权重（同类型内按来源优先级排）
 const SOURCE_RANK = {
   'GitHub 开源': 1,
-  'Apple TV/iTunes 正版': 2,
-  'Apple Music/iTunes 正版': 3,
-  'App Store 正版': 4,
-  'OpenAlex 学术': 5,
-  '正版视频渠道': 6,
-  'Iconify 图标库': 7,
-  'Bing 网页搜索': 8,
-  'Bing 网页': 9,
+  'OpenAlex 学术': 2,
+  '正版视频渠道': 3,
+  '正版音乐渠道': 4,
+  '正版软件渠道': 5,
+  'Iconify 图标库': 6,
+  'Bing 网页搜索': 7,
+  'Bing 网页': 8,
 };
 
 async function search(query, type = 'all', limit = 12) {
